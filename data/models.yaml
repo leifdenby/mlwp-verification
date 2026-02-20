@@ -1,0 +1,168 @@
+subject_areas:
+  - id: deterministic_accuracy
+    name: Deterministic Accuracy
+    description: Pointwise and distribution-aware error skill for core variables (for example 2m temperature, 10m wind, and MSLP).
+    reports:
+      - label: CAWCR Forecast Verification Methods and FAQ
+        relative_path: reports/cawcr_forecast_verification_methods_faq/source_page.html
+      - label: IVMW9 International Verification Method Workshop
+        relative_path: reports/ivmw9_international_verification_method_workshop/source_page.html
+    metric_ids: [rmse, mae, anomaly_corr]
+
+  - id: probabilistic_reliability
+    name: Probabilistic Reliability
+    description: Calibration and sharpness of predictive distributions and exceedance probabilities.
+    reports:
+      - label: IVMW 2020 Major Outcomes (BAMS 2022)
+        relative_path: reports/ivmw_2020_major_outcomes_bams_2022/source_url.txt
+      - label: Verification of AI-Models in Operational Centers
+        relative_path: reports/verification_ai_models_operational_centers/source_page.html
+    metric_ids: [crps, brier_score, reliability_diagram]
+
+  - id: spatial_structure
+    name: Spatial Structure
+    description: Feature-based and scale-aware verification for patterns, displacement, and coherent structures.
+    reports:
+      - label: Bridging the Gap Spatial Verification
+        relative_path: reports/bridging_the_gap_spatial_verification/source_page.html
+      - label: WGNE 2nd International Verification Challenge
+        relative_path: reports/wgne_2nd_international_verification_challenge/source_page.html
+    metric_ids: [fss, sal, object_metrics]
+
+  - id: extreme_rare_events
+    name: Extreme and Rare Events
+    description: Detection and probabilistic discrimination under severe class imbalance.
+    reports:
+      - label: WMO WGNEV Extreme Dependence for Binary Rare Events
+        relative_path: reports/wmo_wgnev_extreme_dependence_binary_rare_events/source_page.html
+      - label: WWRP 2013 Precipitation Verification Methods
+        relative_path: reports/wwrp_2013_precipitation_forecast_verification_methods/source_page.html
+    metric_ids: [extremal_dependence, ets, pod_far_balance]
+
+  - id: cloud_precip_physics
+    name: Cloud and Precipitation Physics
+    description: Process-oriented verification for cloud-related parameters and precipitation characteristics.
+    reports:
+      - label: WWRP 2012 Cloud Parameters Recommended Methods
+        relative_path: reports/wwrp_2012_cloud_parameters_recommended_methods/source_page.html
+      - label: VerAI Workshop 2025 (Meteorological Forecasts)
+        relative_path: reports/verai_workshop_2025_meteorological_forecasts/source_page.html
+    metric_ids: [cloud_fraction_error, precip_intensity_bias, diurnal_cycle_phase]
+
+models:
+  - slug: aurora-mlwp-v1
+    name: Aurora MLWP v1
+    provider: Example Met Lab
+    model_class: Global deterministic plus ensemble postprocessor
+    resolution: 9 km
+    run_cycle: 00/06/12/18 UTC
+    summary: Strong deterministic synoptic skill with improving spatial structure in frontal and convective regimes.
+    scores:
+      deterministic_accuracy:
+        aggregate: A
+        metrics:
+          rmse: { score: A, note: Low RMSE through day-5 over extra-tropics. }
+          mae: { score: A, note: Stable absolute error in coastal and inland domains. }
+          anomaly_corr: { score: B, note: Slight drop in blocked flow regimes. }
+      probabilistic_reliability:
+        aggregate: B
+        metrics:
+          crps: { score: B, note: Good spread-skill relation in temperature and wind. }
+          brier_score: { score: B, note: Moderate reliability for threshold events. }
+          reliability_diagram: { score: C, note: Over-confidence at highest forecast bins. }
+      spatial_structure:
+        aggregate: B
+        metrics:
+          fss: { score: A, note: High FSS at mesoscale windows. }
+          sal: { score: B, note: Balanced SAL for broad precipitation systems. }
+          object_metrics: { score: C, note: Convective core displacement remains notable. }
+      extreme_rare_events:
+        aggregate: C
+        metrics:
+          extremal_dependence: { score: C, note: Useful separation but limited tail sharpness. }
+          ets: { score: C, note: Fair hit skill for high-impact thresholds. }
+          pod_far_balance: { score: C, note: Balanced but conservative alerts. }
+      cloud_precip_physics:
+        aggregate: B
+        metrics:
+          cloud_fraction_error: { score: B, note: Good low-cloud behavior over ocean sectors. }
+          precip_intensity_bias: { score: B, note: Slight heavy-rain underestimation in tropics. }
+          diurnal_cycle_phase: { score: C, note: Timing drift in warm-season convection. }
+
+  - slug: stormnet-ens-2
+    name: StormNet ENS-2
+    provider: Climate Compute Group
+    model_class: Global ensemble diffusion model
+    resolution: 6 km
+    run_cycle: 00/12 UTC
+    summary: Reliable uncertainty envelopes and strong rare-event discrimination, with weaker fine-scale structure.
+    scores:
+      deterministic_accuracy:
+        aggregate: B
+        metrics:
+          rmse: { score: B, note: Consistent midlatitude performance. }
+          mae: { score: B, note: Robust absolute errors over land. }
+          anomaly_corr: { score: B, note: Good phase retention to day-7. }
+      probabilistic_reliability:
+        aggregate: A
+        metrics:
+          crps: { score: A, note: Best-in-class probabilistic sharpness/calibration tradeoff. }
+          brier_score: { score: A, note: Strong threshold probability skill. }
+          reliability_diagram: { score: B, note: Minor under-confidence in low-probability bins. }
+      spatial_structure:
+        aggregate: C
+        metrics:
+          fss: { score: C, note: Adequate at synoptic scales only. }
+          sal: { score: C, note: Structure smoothing in organized convection. }
+          object_metrics: { score: D, note: Object displacement around steep terrain. }
+      extreme_rare_events:
+        aggregate: B
+        metrics:
+          extremal_dependence: { score: A, note: Strong tail dependence capture. }
+          ets: { score: B, note: Reliable hit performance for severe thresholds. }
+          pod_far_balance: { score: B, note: Good recall with manageable FAR. }
+      cloud_precip_physics:
+        aggregate: C
+        metrics:
+          cloud_fraction_error: { score: C, note: Bias over marine stratocumulus decks. }
+          precip_intensity_bias: { score: C, note: Over-dispersed drizzle events. }
+          diurnal_cycle_phase: { score: C, note: Moderate phase lag in afternoon peaks. }
+
+  - slug: atlas-nowcast-4
+    name: Atlas NowCast-4
+    provider: Regional AI Forecast Hub
+    model_class: Regional convection-permitting hybrid ML
+    resolution: 3 km
+    run_cycle: Hourly
+    summary: High-resolution structure and cloud timing strengths, but unstable calibration for extremes.
+    scores:
+      deterministic_accuracy:
+        aggregate: C
+        metrics:
+          rmse: { score: C, note: Good short lead-time but faster degradation. }
+          mae: { score: C, note: Urban heat island bias in warm months. }
+          anomaly_corr: { score: B, note: Solid synoptic coupling in first 24h. }
+      probabilistic_reliability:
+        aggregate: D
+        metrics:
+          crps: { score: D, note: Spread collapse in some mesoscale regimes. }
+          brier_score: { score: D, note: False-alarm inflation at low thresholds. }
+          reliability_diagram: { score: C, note: Calibration repair helps but remains uneven. }
+      spatial_structure:
+        aggregate: A
+        metrics:
+          fss: { score: A, note: Excellent neighborhood skill in convection. }
+          sal: { score: A, note: High-quality structure/location behavior. }
+          object_metrics: { score: B, note: Localized cell-splitting errors. }
+      extreme_rare_events:
+        aggregate: D
+        metrics:
+          extremal_dependence: { score: D, note: Weak separation of top-tail cases. }
+          ets: { score: D, note: Low equitable threat under sparse events. }
+          pod_far_balance: { score: C, note: High POD but high FAR tradeoff. }
+      cloud_precip_physics:
+        aggregate: B
+        metrics:
+          cloud_fraction_error: { score: B, note: Strong multilayer cloud evolution. }
+          precip_intensity_bias: { score: B, note: Realistic heavy-rain tails for short leads. }
+          diurnal_cycle_phase: { score: A, note: Excellent local-time phase agreement. }

@@ -1,0 +1,46 @@
+metrics:
+  rmse:
+    name: RMSE
+    focus: Average magnitude of errors
+  mae:
+    name: MAE
+    focus: Absolute error robustness
+  anomaly_corr:
+    name: Anomaly Correlation
+    focus: Synoptic-scale phase agreement
+  crps:
+    name: CRPS
+    focus: Overall probabilistic distance
+  brier_score:
+    name: Brier Score
+    focus: Binary probability quality
+  reliability_diagram:
+    name: Reliability Diagram Skill
+    focus: Calibration vs confidence
+  fss:
+    name: Fractions Skill Score
+    focus: Scale-dependent spatial agreement
+  sal:
+    name: SAL
+    focus: Structure-amplitude-location balance
+  object_metrics:
+    name: Object-Based Match Skill
+    focus: Feature placement and morphology
+  extremal_dependence:
+    name: Extremal Dependence Index
+    focus: Rare-event association strength
+  ets:
+    name: Equitable Threat Score
+    focus: Hits adjusted for chance
+  pod_far_balance:
+    name: POD/FAR Balance
+    focus: Misses vs false alarms
+  cloud_fraction_error:
+    name: Cloud Fraction Error
+    focus: Total and layered cloud accuracy
+  precip_intensity_bias:
+    name: Precipitation Intensity Bias
+    focus: Wet-day and heavy-rain scaling
+  diurnal_cycle_phase:
+    name: Diurnal Cycle Phase Skill
+    focus: Timing of cloud/precip evolution

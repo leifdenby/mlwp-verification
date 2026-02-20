@@ -1,39 +1,44 @@
-## Repository Artifacts
+## MLWP Verification Website
 
-This workspace includes downloaded resources from `resources.md` and helper files used to fetch them.
+This repository now includes a Vite-based website for machine-learning weather prediction (MLWP) verification reporting.
 
-### Download outputs
+### Stack
 
-- `reports/`: one directory per report/topic from `resources.md`.
-- Each report directory contains:
-- `source_url.txt`: original URL from `resources.md`.
-- `download.bin`: downloaded payload (HTML/PDF/binary depending on source).
-- `wget.log`: download log for the main fetch attempt.
-- One directory has an extra retry log:
-- `reports/ivmw_2020_major_outcomes_bams_2022/wget_retry.log`.
+- Frontend: Vite + vanilla JavaScript (`src/`)
+- Data source: YAML (`data/models.yaml`, `data/metrics.yaml`)
+- Dev backend: Vite middleware endpoint at `/api/mlwp-data`
 
-### Intermediate files and scripts
+### Data model
 
-- `work/report_links.tsv`: URL list used for downloading (topic folder name + URL).
-- `work/download_reports.sh`: batch downloader script.
-- `work/download_status.tsv`: per-link status (`ok`/`failed`) and downloaded size in bytes.
-- `work/test_example.html`: connectivity test artifact from `wget`.
-- `work/build_mlwp_site.py`: generates a static MLWP verification website from JSON input files.
+Site content is defined in two YAML files:
 
-### MLWP verification website
+- `data/models.yaml`
+- `data/metrics.yaml`
 
-- `site/data/verification_framework.json`: verification subject areas, metric definitions, and links to report directories used as starting points.
-- `site/data/models.json`: one object per submitted MLWP model, including aggregate subject grades and metric-level grades (`A`-`E`).
-- Generated outputs:
-- `site/index.html`: model list with color-coded aggregate subject scores and overall grade.
-- `site/models/<model_slug>.html`: one page per model with subject-area aggregates and metric-by-metric breakdown tables.
-- `site/styles.css`: shared styling, color scale, and responsive layout.
-- Rebuild command:
-- `uv run python work/build_mlwp_site.py`
+It contains:
 
-### Current download status
+- `subject_areas`: verification groups, report links, and metric IDs
+- `models`: one entry per MLWP model with aggregate and metric-level `A`-`E` scores
+- `metrics` (in `data/metrics.yaml`): reusable metric definitions (`name`, `focus`)
 
-- 9 of 10 links downloaded with non-zero content.
-- The AMS XML link
-- `https://journals.ametsoc.org/view/journals/bams/103/3/BAMS-D-21-0126.1.xml`
-- is currently blocked for CLI download by a CloudFront WAF challenge response (`HTTP 202`, zero-length body).
+### Run locally (with hot reloading)
+
+1. Install dependencies:
+   - `npm install`
+2. Start the dev server:
+   - `npm run dev`
+
+Hot reload behavior:
+
+- Changes in `src/` update instantly via Vite HMR.
+- Changes in `data/models.yaml` or `data/metrics.yaml` trigger a full-page live reload.
+- The dev backend always serves fresh merged YAML from `/api/mlwp-data`.
+
+### Build
+
+- `npm run build`
+- `npm run preview`
+
+### Existing report resources
+
+Downloaded verification references remain in `reports/` and are linked from the YAML subject areas.
