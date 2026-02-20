@@ -48,6 +48,29 @@ a {
   margin-bottom: 1.2rem;
 }
 
+.top-nav {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.7rem;
+}
+
+.nav-link {
+  font-family: "Space Mono", monospace;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  color: #28463d;
+  border: 1px solid #9eb8ad;
+  border-radius: 999px;
+  padding: 0.28rem 0.6rem;
+  background: #edf6f1;
+}
+
+.nav-link:hover {
+  background: #e4f1ea;
+}
+
 .back-link {
   font-family: "Space Mono", monospace;
   text-transform: uppercase;
@@ -57,9 +80,37 @@ a {
   text-decoration: none;
 }
 
+.demo-badge {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1000;
+  display: inline-flex;
+  align-items: center;
+  font-family: "Space Mono", monospace;
+  font-size: 0.98rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+  color: #a41515;
+  background: #fff5f5;
+  border: 3px solid #cf2323;
+  border-radius: 10px;
+  box-shadow: 0 8px 18px rgba(130, 12, 12, 0.22);
+  padding: 0.4rem 0.75rem;
+}
+
 .title {
   font-size: clamp(1.6rem, 2.2vw, 2.2rem);
   margin-top: 0.4rem;
+}
+
+.section-head {
+  margin-top: 1.4rem;
+}
+
+.section-head .subtitle {
+  margin-top: 0.35rem;
 }
 
 .subtitle {
@@ -119,6 +170,7 @@ a {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 0.5rem;
   padding: 0.45rem 0.55rem;
   cursor: pointer;
   list-style: none;
@@ -126,6 +178,26 @@ a {
 
 .subject-mini summary::-webkit-details-marker {
   display: none;
+}
+
+.subject-mini summary::before {
+  content: "";
+  width: 0;
+  height: 0;
+  border-top: 0.32rem solid transparent;
+  border-bottom: 0.32rem solid transparent;
+  border-left: 0.45rem solid #446056;
+  transform: rotate(0deg);
+  transition: transform 0.18s ease;
+  flex: 0 0 auto;
+}
+
+.subject-mini[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.subject-mini summary > :first-child {
+  flex: 1 1 auto;
 }
 
 .subject-mini[open] summary {
@@ -240,6 +312,27 @@ th {
 
 .area-details summary::-webkit-details-marker {
   display: none;
+}
+
+.area-details summary::before {
+  content: "";
+  width: 0;
+  height: 0;
+  border-top: 0.36rem solid transparent;
+  border-bottom: 0.36rem solid transparent;
+  border-left: 0.52rem solid #365347;
+  transform: rotate(0deg);
+  transition: transform 0.2s ease;
+  margin-right: 0.15rem;
+  flex: 0 0 auto;
+}
+
+.area-details[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.area-details summary h2 {
+  flex: 1 1 auto;
 }
 
 .area-details:not([open]) .subtitle,

@@ -11,6 +11,15 @@ const GRADE_LABEL = {
 
 const app = document.querySelector('#app');
 
+function topNav() {
+  return `
+    <nav class="top-nav">
+      <a href="/" class="nav-link">Dashboard</a>
+      <a href="/prior-work" class="nav-link">Prior Work</a>
+    </nav>
+  `;
+}
+
 function gradeChip(letter) {
   return `<span class="grade-chip grade-${letter.toLowerCase()}" title="${GRADE_LABEL[letter]} performance">${letter}</span>`;
 }
@@ -26,6 +35,7 @@ function notFoundPage() {
   return `
     <main class="app">
       <header class="top">
+        ${topNav()}
         <a href="/" class="back-link">Verification Hub</a>
         <h1 class="title">Page not found</h1>
       </header>
@@ -84,9 +94,11 @@ function dashboardPage(data) {
   return `
     <main class="app">
       <header class="top">
+        ${topNav()}
         <a href="/" class="back-link">Verification Hub</a>
+        <span class="demo-badge">Demonstration</span>
         <h1 class="title">MLWP Verification Dashboard</h1>
-        <p class="subtitle">Subject-area grades and metric-level skill scores for submitted machine learning weather prediction models.</p>
+        <p class="subtitle">Subject-area grades and metric-level skill scores for submitted machine learning weather prediction models, focused on km-scale forecasting systems.</p>
       </header>
       <section class="card">
         <h2>Grade Legend</h2>
@@ -99,6 +111,71 @@ function dashboardPage(data) {
         </p>
       </section>
       <section class="model-grid">${modelCards}</section>
+    </main>
+  `;
+}
+
+function priorWorkPage(data) {
+  const benchmarks = (data.prior_work?.global_benchmark_datasets ?? [])
+    .map(
+      (item) => `
+        <article class="card">
+          <h3>${item.name}</h3>
+          <p class="subtitle">${item.description}</p>
+          <p class="summary"><a href="${item.link}" target="_blank" rel="noreferrer">Open resource</a></p>
+        </article>
+      `
+    )
+    .join('');
+
+  const tooling = (data.prior_work?.verification_tooling ?? [])
+    .map((item) => {
+      const language = item.language ?? 'Not specified';
+      const inputFormat = item.input_format ?? 'Not specified';
+      const outputFormat = item.output_format ?? 'Not specified';
+      return `
+        <tr>
+          <td><a href="${item.link}" target="_blank" rel="noreferrer">${item.name}</a></td>
+          <td>${item.description}</td>
+          <td>${language}</td>
+          <td>${inputFormat}</td>
+          <td>${outputFormat}</td>
+        </tr>
+      `;
+    })
+    .join('');
+
+  return `
+    <main class="app">
+      <header class="top">
+        ${topNav()}
+        <a href="/" class="back-link">Verification Hub</a>
+        <h1 class="title">Prior Work</h1>
+        <p class="subtitle">Curated references you can keep extending in <code>data/prior-work.yaml</code>.</p>
+      </header>
+      <section class="section-head">
+        <h2>Global-Resolution Benchmark Datasets</h2>
+        <p class="subtitle">Reusable datasets and benchmark tracks for ML weather prediction.</p>
+      </section>
+      <section class="model-grid">${benchmarks}</section>
+      <section class="section-head">
+        <h2>Verification Tooling</h2>
+        <p class="subtitle">Open tools and frameworks for verification workflows and diagnostics.</p>
+      </section>
+      <section class="card">
+        <table>
+          <thead>
+            <tr>
+              <th>Tool</th>
+              <th>Description</th>
+              <th>Programming Language</th>
+              <th>Input File Format</th>
+              <th>Output File Format</th>
+            </tr>
+          </thead>
+          <tbody>${tooling}</tbody>
+        </table>
+      </section>
     </main>
   `;
 }
@@ -173,6 +250,7 @@ function modelPage(data, slug) {
   return `
     <main class="app">
       <header class="top">
+        ${topNav()}
         <a href="/" class="back-link">Verification Hub</a>
         <h1 class="title">${model.name}</h1>
         <p class="subtitle">${model.provider} | ${model.model_class} | ${model.resolution} | Run cycle: ${model.run_cycle}</p>
@@ -186,6 +264,10 @@ function route(data) {
   const path = window.location.pathname;
   if (path === '/' || path === '/index.html') {
     return dashboardPage(data);
+  }
+
+  if (path === '/prior-work' || path === '/prior-work/') {
+    return priorWorkPage(data);
   }
 
   if (path.startsWith('/models/')) {
@@ -211,7 +293,7 @@ async function render() {
           <h1 class="title">MLWP Verification Dashboard</h1>
         </header>
         <div class="error">
-          Failed to load site data from <code>data/models.yaml</code>.<br />
+          Failed to load site data from <code>data/models.yaml</code>, <code>data/metrics.yaml</code>, or <code>data/prior-work.yaml</code>.<br />
           ${error instanceof Error ? error.message : String(error)}
         </div>
       </main>

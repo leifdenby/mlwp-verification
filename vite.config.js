@@ -8,6 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const modelsPath = path.resolve(__dirname, 'data/models.yaml');
 const metricsPath = path.resolve(__dirname, 'data/metrics.yaml');
+const priorWorkPath = path.resolve(__dirname, 'data/prior-work.yaml');
 
 function toPosixPath(filePath) {
   return filePath.split(path.sep).join('/');
@@ -40,8 +41,10 @@ function enrichReport(report) {
 function readData() {
   const modelsContent = fs.readFileSync(modelsPath, 'utf8');
   const metricsContent = fs.readFileSync(metricsPath, 'utf8');
+  const priorWorkContent = fs.readFileSync(priorWorkPath, 'utf8');
   const modelsData = yaml.load(modelsContent);
   const metricsData = yaml.load(metricsContent);
+  const priorWorkData = yaml.load(priorWorkContent);
   const metricDict = metricsData?.metrics ?? {};
 
   const subjectAreas = (modelsData?.subject_areas ?? []).map((area) => {
@@ -58,7 +61,11 @@ function readData() {
 
   return {
     ...modelsData,
-    subject_areas: subjectAreas
+    subject_areas: subjectAreas,
+    prior_work: {
+      global_benchmark_datasets: priorWorkData?.global_benchmark_datasets ?? [],
+      verification_tooling: priorWorkData?.verification_tooling ?? []
+    }
   };
 }
 
@@ -76,17 +83,17 @@ function mlwpDataApiPlugin() {
           res.setHeader('Content-Type', 'application/json');
           res.end(
             JSON.stringify({
-              error: 'Failed to parse data/models.yaml or data/metrics.yaml',
+              error: 'Failed to parse data/models.yaml, data/metrics.yaml, or data/prior-work.yaml',
               details: error instanceof Error ? error.message : String(error)
             })
           );
         }
       });
 
-      server.watcher.add([modelsPath, metricsPath]);
+      server.watcher.add([modelsPath, metricsPath, priorWorkPath]);
       server.watcher.on('change', (file) => {
         const resolved = path.resolve(file);
-        if (resolved === modelsPath || resolved === metricsPath) {
+        if (resolved === modelsPath || resolved === metricsPath || resolved === priorWorkPath) {
           server.ws.send({ type: 'full-reload' });
         }
       });

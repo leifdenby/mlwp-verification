@@ -6,6 +6,7 @@ This repository now includes a Vite-based website for machine-learning weather p
 
 - Frontend: Vite + vanilla JavaScript (`src/`)
 - Data source: YAML (`data/models.yaml`, `data/metrics.yaml`)
+- Data source: YAML (`data/models.yaml`, `data/metrics.yaml`, `data/prior-work.yaml`)
 - Dev backend: Vite middleware endpoint at `/api/mlwp-data`
 
 ### Data model
@@ -14,12 +15,16 @@ Site content is defined in two YAML files:
 
 - `data/models.yaml`
 - `data/metrics.yaml`
+- `data/prior-work.yaml`
 
 It contains:
 
 - `subject_areas`: verification groups, report links, and metric IDs
 - `models`: one entry per MLWP model with aggregate and metric-level `A`-`E` scores
 - `metrics` (in `data/metrics.yaml`): reusable metric definitions (`name`, `focus`)
+- prior work lists (in `data/prior-work.yaml`):
+- `global_benchmark_datasets` (Global-Resolution Benchmark Datasets)
+- `verification_tooling`
 
 ### Run locally (with hot reloading)
 
@@ -31,8 +36,14 @@ It contains:
 Hot reload behavior:
 
 - Changes in `src/` update instantly via Vite HMR.
-- Changes in `data/models.yaml` or `data/metrics.yaml` trigger a full-page live reload.
+- Changes in `data/models.yaml`, `data/metrics.yaml`, or `data/prior-work.yaml` trigger a full-page live reload.
 - The dev backend always serves fresh merged YAML from `/api/mlwp-data`.
+
+### Pages
+
+- `/`: model dashboard
+- `/models/<slug>`: model detail page
+- `/prior-work`: curated prior work references (editable via `data/prior-work.yaml`)
 
 ### Build
 

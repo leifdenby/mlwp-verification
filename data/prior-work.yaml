@@ -1,0 +1,48 @@
+global_benchmark_datasets:
+  - name: WeatherBench 2
+    description: Global NWP reanalysis/forecast benchmark for ML weather models.
+    link: https://weatherbench2.readthedocs.io/
+  - name: ExtremeWeatherBench
+    description: Open benchmark for evaluating ML weather models on extreme weather events.
+    link: https://github.com/brightbandtech/ExtremeWeatherBench
+  - name: ECMWF AI Weather Quest
+    description: Medium-range benchmark tasks for data-driven weather prediction.
+    link: https://www.ecmwf.int/en/forecasts/dataset/machine-learning-weather-prediction-datasets
+
+verification_tooling:
+  - name: METplus
+    description: Community system for forecast verification and diagnostics across deterministic/probabilistic workflows.
+    link: https://dtcenter.org/community-code/model-evaluation-tools-met
+    language: Python, C++, Fortran
+    input_format: GRIB, NetCDF, BUFR, point observations
+    output_format: NetCDF, JSON, text/stat files, plots
+  - name: scores
+    description: Python package for weather and climate forecast verification metrics.
+    link: https://scores.readthedocs.io/
+    language: Python
+    input_format: xarray Dataset/DataArray, NumPy, pandas
+    output_format: xarray, NumPy, pandas, Python objects
+  - name: WeatherGenerator Evaluate
+    description: ECMWF WeatherGenerator evaluation package for verification workflows.
+    link: https://github.com/ecmwf/WeatherGenerator/tree/develop/packages/evaluate/
+    language: Python
+    input_format: GRIB, Zarr, NetCDF
+    output_format: NetCDF, parquet, plots
+  - name: verif
+    description: Forecast verification package from the Weather Forecasting and Radar Technologies group.
+    link: https://github.com/WFRT/verif
+    language: Python
+    input_format: NetCDF, text tables
+    output_format: plots, text summaries
+  - name: rmai-verification
+    description: Verification tools and methods for regional ML weather prediction workflows.
+    link: https://github.com/rmi-mlwp/rmai-verification
+    language: Python
+    input_format: NetCDF, GRIB, CSV
+    output_format: CSV, NetCDF, plots
+  - name: harp
+    description: Verification software for meteorological forecast and observation evaluation.
+    link: https://github.com/harphub/harp
+    language: R
+    input_format: NetCDF, text, SQL query outputs
+    output_format: text tables, plots, verification scores
