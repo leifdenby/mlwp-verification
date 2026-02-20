@@ -2,39 +2,61 @@ metrics:
   rmse:
     name: RMSE
     focus: Average magnitude of errors
+    reference_heading: Root Mean Square Error (RMSE)
+    reference_link: https://jwgfvr.github.io/forecastverification/index.html#RMSE
   mae:
     name: MAE
     focus: Absolute error robustness
+    reference_heading: Mean Absolute Error (MAE)
+    reference_link: https://jwgfvr.github.io/forecastverification/index.html#MAE
   anomaly_corr:
     name: Anomaly Correlation
     focus: Synoptic-scale phase agreement
+    reference_heading: Anomaly Correlation (ACC)
+    reference_link: https://jwgfvr.github.io/forecastverification/index.html#ACC
   crps:
     name: CRPS
     focus: Overall probabilistic distance
+    reference_heading: Continuous Ranked Probability Score (CRPS)
+    reference_link: https://jwgfvr.github.io/forecastverification/index.html#CRPS
   brier_score:
     name: Brier Score
     focus: Binary probability quality
+    reference_heading: Brier Score (BS)
+    reference_link: https://jwgfvr.github.io/forecastverification/index.html#BS
   reliability_diagram:
     name: Reliability Diagram Skill
     focus: Calibration vs confidence
+    reference_heading: Reliability Diagram
+    reference_link: https://jwgfvr.github.io/forecastverification/index.html#reliability
   fss:
     name: Fractions Skill Score
     focus: Scale-dependent spatial agreement
+    reference_heading: Fractions Skill Score (FSS)
+    reference_link: https://jwgfvr.github.io/forecastverification/index.html#FSS
   sal:
     name: SAL
     focus: Structure-amplitude-location balance
+    reference_heading: Structure-Amplitude-Location (SAL)
+    reference_link: https://journals.ametsoc.org/view/journals/mwre/136/11/2008mwr2415.1.xml
   object_metrics:
     name: Object-Based Match Skill
     focus: Feature placement and morphology
+    reference_heading: Object-based Verification
+    reference_link: https://jwgfvr.github.io/forecastverification/index.html#object
   extremal_dependence:
     name: Extremal Dependence Index
     focus: Rare-event association strength
   ets:
     name: Equitable Threat Score
     focus: Hits adjusted for chance
+    reference_heading: Equitable Threat Score (ETS)
+    reference_link: https://jwgfvr.github.io/forecastverification/index.html#ETS
   pod_far_balance:
     name: POD/FAR Balance
     focus: Misses vs false alarms
+    reference_heading: POD and FAR
+    reference_link: https://jwgfvr.github.io/forecastverification/index.html#POD
   cloud_fraction_error:
     name: Cloud Fraction Error
     focus: Total and layered cloud accuracy
@@ -44,3 +66,20 @@ metrics:
   diurnal_cycle_phase:
     name: Diurnal Cycle Phase Skill
     focus: Timing of cloud/precip evolution
+
+candidate_metrics:
+  - name: Mean Error (Bias)
+    reason: Useful for signed error diagnosis in addition to magnitude-only metrics.
+    reference_link: https://jwgfvr.github.io/forecastverification/index.html#meanerror
+  - name: Mean Squared Error (MSE)
+    reason: Complements RMSE and separates squared-error behavior.
+    reference_link: https://jwgfvr.github.io/forecastverification/index.html#MSE
+  - name: Multiplicative Bias
+    reason: Useful for ratio-based bias diagnostics (for example precipitation-like variables).
+    reference_link: https://jwgfvr.github.io/forecastverification/index.html#multiplicative_bias
+  - name: Brier Skill Score (BSS)
+    reason: Skill-relative probabilistic score beyond raw Brier Score.
+    reference_link: https://jwgfvr.github.io/forecastverification/index.html#BSS
+  - name: Heidke Skill Score (HSS)
+    reason: Adds chance-corrected categorical skill beyond ETS.
+    reference_link: https://jwgfvr.github.io/forecastverification/index.html#HSS

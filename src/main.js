@@ -47,6 +47,14 @@ function gradeChip(letter) {
   return `<span class="grade-chip grade-${letter.toLowerCase()}" title="${GRADE_LABEL[letter]} performance">${letter}</span>`;
 }
 
+function metricHelpLink(metric) {
+  if (metric.reference_link) {
+    const heading = metric.reference_heading ?? metric.name;
+    return `<a class="metric-help-link" href="${metric.reference_link}" target="_blank" rel="noreferrer" title="About this metric: ${heading}" aria-label="About ${metric.name}">?</a>`;
+  }
+  return '';
+}
+
 function overallGrade(subjectGrades) {
   const values = subjectGrades.map((grade) => GRADE_VALUE[grade]);
   const score = Math.round(values.reduce((a, b) => a + b, 0) / values.length);
@@ -70,6 +78,15 @@ function notFoundPage() {
 }
 
 function dashboardPage(data) {
+  const candidateMetrics = (data.candidate_metrics ?? [])
+    .map((metric) => {
+      const metricName = metric.reference_link
+        ? `<a href="${metric.reference_link}" target="_blank" rel="noreferrer">${metric.name}</a>`
+        : metric.name;
+      return `<li><strong>${metricName}:</strong> ${metric.reason ?? ''}</li>`;
+    })
+    .join('');
+
   const modelCards = data.models
     .map((model) => {
       const subjectBlocks = data.subject_areas
@@ -80,7 +97,7 @@ function dashboardPage(data) {
               const metricScore = model.scores[area.id].metrics[metric.id];
               return `
                 <li>
-                  <span>${metric.name}</span>
+                  <span class="metric-name-wrap">${metric.name}${metricHelpLink(metric)}</span>
                   ${gradeChip(metricScore.score)}
                 </li>
               `;
@@ -134,6 +151,11 @@ function dashboardPage(data) {
         </p>
       </section>
       <section class="model-grid">${modelCards}</section>
+      <section class="section-head">
+        <h2>Further Metrics To Consider</h2>
+        <p class="subtitle">Potential verification metrics that may be useful for future assessment scope.</p>
+        <ul class="candidate-metrics-list">${candidateMetrics}</ul>
+      </section>
     </main>
   `;
 }
@@ -168,6 +190,18 @@ function priorWorkPage(data) {
     })
     .join('');
 
+  const globalEfforts = (data.prior_work?.global_forecast_verification_efforts ?? [])
+    .map(
+      (item) => `
+        <article class="card">
+          <h3>${item.name}</h3>
+          <p class="subtitle">${item.description}</p>
+          <p class="summary"><a href="${item.link}" target="_blank" rel="noreferrer">Open resource</a></p>
+        </article>
+      `
+    )
+    .join('');
+
   return `
     <main class="app">
       <header class="top">
@@ -181,6 +215,11 @@ function priorWorkPage(data) {
         <p class="subtitle">Reusable datasets and benchmark tracks for ML weather prediction.</p>
       </section>
       <section class="model-grid">${benchmarks}</section>
+      <section class="section-head">
+        <h2>Efforts on Global Forecast Verification</h2>
+        <p class="subtitle">Community coordination and shared initiatives for global forecast verification.</p>
+      </section>
+      <section class="model-grid">${globalEfforts}</section>
       <section class="section-head">
         <h2>Verification Tooling</h2>
         <p class="subtitle">Open tools and frameworks for verification workflows and diagnostics.</p>
@@ -217,7 +256,7 @@ function modelPage(data, slug) {
           const metricScore = areaScore.metrics[metric.id];
           return `
             <tr>
-              <td>${metric.name}</td>
+              <td><span class="metric-name-wrap">${metric.name}${metricHelpLink(metric)}</span></td>
               <td>${metric.focus}</td>
               <td>${gradeChip(metricScore.score)}</td>
               <td>${metricScore.note}</td>

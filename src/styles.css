@@ -113,6 +113,19 @@ a {
   margin-top: 0.35rem;
 }
 
+.candidate-metrics-list {
+  margin: 0.6rem 0 0;
+  padding-left: 1.2rem;
+}
+
+.candidate-metrics-list li {
+  margin-top: 0.3rem;
+}
+
+.candidate-metrics-list li:first-child {
+  margin-top: 0;
+}
+
 .subtitle {
   color: var(--muted);
   margin-top: 0.5rem;
@@ -220,6 +233,33 @@ a {
 
 .subject-metrics li:first-child {
   margin-top: 0;
+}
+
+.metric-name-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.metric-help-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 999px;
+  border: 1px solid #7f968c;
+  background: #eef4f0;
+  color: #2d4a40;
+  font-family: "Space Mono", monospace;
+  font-size: 0.7rem;
+  line-height: 1;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.metric-help-link:hover {
+  background: #e3eee8;
 }
 
 .grade-chip {

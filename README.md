@@ -22,6 +22,8 @@ It contains:
 - `subject_areas`: verification groups, report links, and metric IDs
 - `models`: one entry per MLWP model with aggregate and metric-level `A`-`E` scores
 - `metrics` (in `data/metrics.yaml`): reusable metric definitions (`name`, `focus`)
+- metric references (in `data/metrics.yaml`): optional `reference_heading` + `reference_link` for external metric documentation
+- candidate metrics (in `data/metrics.yaml`): optional `candidate_metrics` list shown on the dashboard as potential additions
 - prior work lists (in `data/prior-work.yaml`):
 - `global_benchmark_datasets` (Global-Resolution Benchmark Datasets)
 - `verification_tooling`

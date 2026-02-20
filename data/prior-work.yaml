@@ -9,6 +9,11 @@ global_benchmark_datasets:
     description: Medium-range benchmark tasks for data-driven weather prediction.
     link: https://www.ecmwf.int/en/forecasts/dataset/machine-learning-weather-prediction-datasets
 
+global_forecast_verification_efforts:
+  - name: WP-MIP Verification Wiki
+    description: Community effort page for global forecast verification methods and coordination.
+    link: https://github.com/WP-MIP/verification/wiki
+
 verification_tooling:
   - name: METplus
     description: Community system for forecast verification and diagnostics across deterministic/probabilistic workflows.
@@ -75,3 +80,11 @@ verification_tooling:
       - name: CSV observations (custom reader)
         link: https://harphub.github.io/harpIO/articles/read_csv_obs.html
     output_format: text tables, plots, verification scores
+  - name: SpatialVx
+    description: R package for spatial forecast verification methods and diagnostics.
+    link: https://projects.ral.ucar.edu/icp/SpatialVx/
+    language: R
+    input_format:
+      - gridded forecast fields
+      - gridded observation fields
+    output_format: verification scores, diagnostics, plots

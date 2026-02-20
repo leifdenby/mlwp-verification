@@ -62,8 +62,10 @@ function readData() {
   return {
     ...modelsData,
     subject_areas: subjectAreas,
+    candidate_metrics: metricsData?.candidate_metrics ?? [],
     prior_work: {
       global_benchmark_datasets: priorWorkData?.global_benchmark_datasets ?? [],
+      global_forecast_verification_efforts: priorWorkData?.global_forecast_verification_efforts ?? [],
       verification_tooling: priorWorkData?.verification_tooling ?? []
     }
   };
