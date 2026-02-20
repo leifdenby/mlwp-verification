@@ -16,6 +16,7 @@ function topNav() {
     <nav class="top-nav">
       <a href="/" class="nav-link">Dashboard</a>
       <a href="/prior-work" class="nav-link">Prior Work</a>
+      <a href="/todo" class="nav-link">TODO</a>
     </nav>
   `;
 }
@@ -50,9 +51,19 @@ function gradeChip(letter) {
 function metricHelpLink(metric) {
   if (metric.reference_link) {
     const heading = metric.reference_heading ?? metric.name;
-    return `<a class="metric-help-link" href="${metric.reference_link}" target="_blank" rel="noreferrer" title="About this metric: ${heading}" aria-label="About ${metric.name}">?</a>`;
+    const externalAttrs = metric.reference_link.startsWith('/')
+      ? ''
+      : ' target="_blank" rel="noreferrer"';
+    return `<a class="metric-help-link" href="${metric.reference_link}"${externalAttrs} title="About this metric: ${heading}" aria-label="About ${metric.name}">?</a>`;
   }
   return '';
+}
+
+function metricLabelHtml(metric, modelSlug) {
+  if (metric.id === 'rmse' && modelSlug) {
+    return `<a href="/models/${modelSlug}/metrics/rmse">${metric.name}</a>`;
+  }
+  return metric.name;
 }
 
 function overallGrade(subjectGrades) {
@@ -97,7 +108,7 @@ function dashboardPage(data) {
               const metricScore = model.scores[area.id].metrics[metric.id];
               return `
                 <li>
-                  <span class="metric-name-wrap">${metric.name}${metricHelpLink(metric)}</span>
+                  <span class="metric-name-wrap">${metricLabelHtml(metric, model.slug)}${metricHelpLink(metric)}</span>
                   ${gradeChip(metricScore.score)}
                 </li>
               `;
@@ -137,7 +148,7 @@ function dashboardPage(data) {
         ${topNav()}
         <a href="/" class="back-link">Verification Hub</a>
         <span class="demo-badge">Demonstration</span>
-        <h1 class="title">MLWP Verification Dashboard</h1>
+        <h1 class="title">MLWP Benchmark Dashboard</h1>
         <p class="subtitle">Subject-area grades and metric-level skill scores for submitted machine learning weather prediction models, focused on km-scale forecasting systems.</p>
       </header>
       <section class="card">
@@ -242,6 +253,140 @@ function priorWorkPage(data) {
   `;
 }
 
+function todoPage() {
+  return `
+    <main class="app">
+      <header class="top">
+        ${topNav()}
+        <a href="/" class="back-link">Verification Hub</a>
+        <h1 class="title">TODO</h1>
+      </header>
+      <section class="card">
+        <p class="subtitle">Find software to generate "score-cards"</p>
+      </section>
+    </main>
+  `;
+}
+
+function rmseDataForModel(slug) {
+  const byModel = {
+    'aurora-mlwp-v1': {
+      valid_times: ['00Z', '06Z', '12Z', '18Z', '00Z+1', '06Z+1'],
+      series: [
+        { variable: '2m Temperature (K)', values: [1.1, 1.0, 1.0, 1.2, 1.3, 1.4] },
+        { variable: '10m Wind Speed (m/s)', values: [2.2, 2.1, 2.0, 2.2, 2.3, 2.4] },
+        { variable: 'MSLP (hPa)', values: [1.7, 1.6, 1.5, 1.7, 1.8, 1.9] }
+      ]
+    },
+    'stormnet-ens-2': {
+      valid_times: ['00Z', '06Z', '12Z', '18Z', '00Z+1', '06Z+1'],
+      series: [
+        { variable: '2m Temperature (K)', values: [1.3, 1.2, 1.2, 1.3, 1.5, 1.6] },
+        { variable: '10m Wind Speed (m/s)', values: [2.1, 2.0, 2.1, 2.2, 2.2, 2.3] },
+        { variable: 'MSLP (hPa)', values: [2.0, 1.9, 1.8, 1.9, 2.1, 2.2] }
+      ]
+    },
+    'atlas-nowcast-4': {
+      valid_times: ['00Z', '06Z', '12Z', '18Z', '00Z+1', '06Z+1'],
+      series: [
+        { variable: '2m Temperature (K)', values: [1.5, 1.4, 1.3, 1.5, 1.6, 1.7] },
+        { variable: '10m Wind Speed (m/s)', values: [2.8, 2.6, 2.5, 2.6, 2.8, 3.0] },
+        { variable: 'MSLP (hPa)', values: [2.3, 2.2, 2.1, 2.2, 2.4, 2.5] }
+      ]
+    }
+  };
+
+  return (
+    byModel[slug] ?? {
+      valid_times: ['00Z', '06Z', '12Z', '18Z', '00Z+1', '06Z+1'],
+      series: [
+        { variable: '2m Temperature (K)', values: [1.2, 1.1, 1.1, 1.2, 1.4, 1.5] },
+        { variable: '10m Wind Speed (m/s)', values: [2.4, 2.3, 2.2, 2.4, 2.5, 2.6] },
+        { variable: 'MSLP (hPa)', values: [1.9, 1.8, 1.7, 1.8, 2.0, 2.1] }
+      ]
+    }
+  );
+}
+
+function rmsePage(model) {
+  const rmseData = rmseDataForModel(model?.slug ?? 'default');
+
+  const colors = ['#2f8e63', '#2f5e8e', '#8e5a2f'];
+  const width = 860;
+  const height = 360;
+  const leftPad = 64;
+  const rightPad = 22;
+  const topPad = 20;
+  const bottomPad = 70;
+  const plotW = width - leftPad - rightPad;
+  const plotH = height - topPad - bottomPad;
+
+  const allValues = rmseData.series.flatMap((s) => s.values);
+  const yMax = Math.max(...allValues) * 1.15;
+  const xStep = plotW / (rmseData.valid_times.length - 1);
+
+  const gridLines = Array.from({ length: 6 }, (_, i) => {
+    const frac = i / 5;
+    const y = topPad + frac * plotH;
+    const value = (yMax * (1 - frac)).toFixed(1);
+    return `
+      <line x1="${leftPad}" y1="${y}" x2="${leftPad + plotW}" y2="${y}" class="rmse-grid"></line>
+      <text x="${leftPad - 8}" y="${y + 4}" class="rmse-axis-label" text-anchor="end">${value}</text>
+    `;
+  }).join('');
+
+  const xLabels = rmseData.valid_times
+    .map((label, i) => {
+      const x = leftPad + i * xStep;
+      return `<text x="${x}" y="${topPad + plotH + 22}" class="rmse-axis-label" text-anchor="middle">${label}</text>`;
+    })
+    .join('');
+
+  const seriesPaths = rmseData.series
+    .map((series, seriesIdx) => {
+      const color = colors[seriesIdx % colors.length];
+      const points = series.values.map((value, i) => {
+        const x = leftPad + i * xStep;
+        const y = topPad + plotH - (value / yMax) * plotH;
+        return { x, y };
+      });
+      const path = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
+      const circles = points.map((p) => `<circle cx="${p.x}" cy="${p.y}" r="3.2" fill="${color}"></circle>`).join('');
+      const legendY = topPad + plotH + 40 + seriesIdx * 16;
+      return `
+        <path d="${path}" fill="none" stroke="${color}" stroke-width="2.2"></path>
+        ${circles}
+        <rect x="${leftPad + 8}" y="${legendY - 9}" width="12" height="12" fill="${color}"></rect>
+        <text x="${leftPad + 26}" y="${legendY}" class="rmse-legend-label">${series.variable}</text>
+      `;
+    })
+    .join('');
+
+  return `
+    <main class="app">
+      <header class="top">
+        ${topNav()}
+        <a href="/" class="back-link">Verification Hub</a>
+        <h1 class="title">RMSE by Physical Variable: ${model?.name ?? 'Model'}</h1>
+        <p class="subtitle">Demonstration data: RMSE values computed against observations for this model and a single evaluation period.</p>
+      </header>
+      <section class="card">
+        <svg class="rmse-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="RMSE values for multiple physical variables relative to observations">
+          <rect x="0" y="0" width="${width}" height="${height}" fill="#ffffff"></rect>
+          ${gridLines}
+          <line x1="${leftPad}" y1="${topPad}" x2="${leftPad}" y2="${topPad + plotH}" class="rmse-axis"></line>
+          <line x1="${leftPad}" y1="${topPad + plotH}" x2="${leftPad + plotW}" y2="${topPad + plotH}" class="rmse-axis"></line>
+          ${xLabels}
+          ${seriesPaths}
+          <text x="${leftPad - 42}" y="${topPad + 8}" class="rmse-axis-title">RMSE</text>
+          <text x="${leftPad + plotW / 2}" y="${height - 8}" class="rmse-axis-title" text-anchor="middle">valid_time</text>
+        </svg>
+        <p class="subtitle">Reference metric definition: <a href="https://jwgfvr.github.io/forecastverification/index.html#RMSE" target="_blank" rel="noreferrer">JWGfVR RMSE</a></p>
+      </section>
+    </main>
+  `;
+}
+
 function modelPage(data, slug) {
   const model = data.models.find((entry) => entry.slug === slug);
   if (!model) {
@@ -256,7 +401,7 @@ function modelPage(data, slug) {
           const metricScore = areaScore.metrics[metric.id];
           return `
             <tr>
-              <td><span class="metric-name-wrap">${metric.name}${metricHelpLink(metric)}</span></td>
+              <td><span class="metric-name-wrap">${metricLabelHtml(metric, model.slug)}${metricHelpLink(metric)}</span></td>
               <td>${metric.focus}</td>
               <td>${gradeChip(metricScore.score)}</td>
               <td>${metricScore.note}</td>
@@ -332,6 +477,24 @@ function route(data) {
     return priorWorkPage(data);
   }
 
+  if (path === '/todo' || path === '/todo/') {
+    return todoPage();
+  }
+
+  const rmseModelMatch = path.match(/^\/models\/([^/]+)\/metrics\/rmse\/?$/);
+  if (rmseModelMatch) {
+    const slug = rmseModelMatch[1];
+    const model = data.models.find((entry) => entry.slug === slug);
+    if (!model) {
+      return notFoundPage();
+    }
+    return rmsePage(model);
+  }
+
+  if (path === '/metrics/rmse' || path === '/metrics/rmse/') {
+    return rmsePage(data.models[0]);
+  }
+
   if (path.startsWith('/models/')) {
     const slug = path.replace('/models/', '').replace(/\/$/, '');
     return modelPage(data, slug);
@@ -352,7 +515,7 @@ async function render() {
     app.innerHTML = `
       <main class="app">
         <header class="top">
-          <h1 class="title">MLWP Verification Dashboard</h1>
+          <h1 class="title">MLWP Benchmark Dashboard</h1>
         </header>
         <div class="error">
           Failed to load site data from <code>data/models.yaml</code>, <code>data/metrics.yaml</code>, or <code>data/prior-work.yaml</code>.<br />

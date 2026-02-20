@@ -88,3 +88,11 @@ verification_tooling:
       - gridded forecast fields
       - gridded observation fields
     output_format: verification scores, diagnostics, plots
+  - name: swissai verification notebook
+    description: Notebook example for ML weather verification workflow and diagnostics.
+    link: https://nbviewer.org/github/sadamov/swissai/blob/main/verification.ipynb
+    language: Python (Jupyter Notebook)
+    input_format:
+      - model forecast files
+      - observation/reference data
+    output_format: plots, summary verification metrics

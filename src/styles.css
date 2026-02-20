@@ -165,6 +165,19 @@ a {
   color: var(--muted);
 }
 
+.metric-page-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-family: "Space Mono", monospace;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.metric-page-link:hover {
+  text-decoration: underline;
+}
+
 .subject-mini-grid {
   margin-top: 0.8rem;
   display: grid;
@@ -260,6 +273,42 @@ a {
 
 .metric-help-link:hover {
   background: #e3eee8;
+}
+
+.rmse-chart {
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.rmse-axis-label {
+  fill: #34554a;
+  font-size: 12px;
+  font-family: "IBM Plex Sans", sans-serif;
+}
+
+.rmse-axis-title {
+  fill: #1a3a31;
+  font-size: 12px;
+  font-family: "Space Mono", monospace;
+}
+
+.rmse-grid {
+  stroke: #d9e5de;
+  stroke-width: 1;
+}
+
+.rmse-axis {
+  stroke: #91a89d;
+  stroke-width: 1.2;
+}
+
+.rmse-legend-label {
+  fill: #1f3f36;
+  font-size: 12px;
+  font-family: "IBM Plex Sans", sans-serif;
 }
 
 .grade-chip {
