@@ -12,37 +12,66 @@ global_benchmark_datasets:
 verification_tooling:
   - name: METplus
     description: Community system for forecast verification and diagnostics across deterministic/probabilistic workflows.
-    link: https://dtcenter.org/community-code/model-evaluation-tools-met
+    link: https://github.com/dtcenter/METplus
     language: Python, C++, Fortran
-    input_format: GRIB, NetCDF, BUFR, point observations
+    input_format:
+      - GRIB
+      - NetCDF
+      - BUFR
+      - Point observations
     output_format: NetCDF, JSON, text/stat files, plots
   - name: scores
     description: Python package for weather and climate forecast verification metrics.
-    link: https://scores.readthedocs.io/
+    link: https://github.com/nci/scores
     language: Python
-    input_format: xarray Dataset/DataArray, NumPy, pandas
+    input_format:
+      - xarray Dataset/DataArray
+      - NumPy
+      - pandas
     output_format: xarray, NumPy, pandas, Python objects
   - name: WeatherGenerator Evaluate
     description: ECMWF WeatherGenerator evaluation package for verification workflows.
     link: https://github.com/ecmwf/WeatherGenerator/tree/develop/packages/evaluate/
     language: Python
-    input_format: GRIB, Zarr, NetCDF
+    input_format:
+      - GRIB
+      - Zarr
+      - NetCDF
     output_format: NetCDF, parquet, plots
   - name: verif
     description: Forecast verification package from the Weather Forecasting and Radar Technologies group.
     link: https://github.com/WFRT/verif
     language: Python
-    input_format: NetCDF, text tables
+    input_format:
+      - name: Text format
+        link: https://github.com/WFRT/verif/wiki/Arranging-my-own-data#text-based-input
+      - name: NetCDF format
+        link: https://github.com/WFRT/verif/wiki/Arranging-my-own-data#netcdf-based-input
     output_format: plots, text summaries
   - name: rmai-verification
     description: Verification tools and methods for regional ML weather prediction workflows.
     link: https://github.com/rmi-mlwp/rmai-verification
     language: Python
-    input_format: NetCDF, GRIB, CSV
+    input_format:
+      - NetCDF
+      - GRIB
+      - CSV
     output_format: CSV, NetCDF, plots
   - name: harp
     description: Verification software for meteorological forecast and observation evaluation.
     link: https://github.com/harphub/harp
     language: R
-    input_format: NetCDF, text, SQL query outputs
+    input_format:
+      - name: NetCDF
+        link: https://harphub.github.io/harpIO/reference/read_grid.html
+      - name: GRIB
+        link: https://harphub.github.io/harpIO/articles/file_options.html
+      - name: FA
+        link: https://harphub.github.io/harpIO/reference/read_forecast.html
+      - name: vfld
+        link: https://harphub.github.io/harpIO/articles/write_forecast_data.html
+      - name: vobs / OBSTABLE
+        link: https://harphub.github.io/harpIO/reference/read_point_obs.html
+      - name: CSV observations (custom reader)
+        link: https://harphub.github.io/harpIO/articles/read_csv_obs.html
     output_format: text tables, plots, verification scores

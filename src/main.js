@@ -20,6 +20,29 @@ function topNav() {
   `;
 }
 
+function renderInputFormats(inputFormats) {
+  if (!inputFormats) {
+    return 'Not specified';
+  }
+
+  if (Array.isArray(inputFormats)) {
+    const items = inputFormats
+      .map((fmt) => {
+        if (fmt?.name && fmt?.link) {
+          return `<a href="${fmt.link}" target="_blank" rel="noreferrer">${fmt.name}</a>`;
+        }
+        if (typeof fmt === 'string') {
+          return fmt;
+        }
+        return '';
+      })
+      .filter(Boolean);
+    return items.length > 0 ? items.join(', ') : 'Not specified';
+  }
+
+  return inputFormats;
+}
+
 function gradeChip(letter) {
   return `<span class="grade-chip grade-${letter.toLowerCase()}" title="${GRADE_LABEL[letter]} performance">${letter}</span>`;
 }
@@ -131,7 +154,7 @@ function priorWorkPage(data) {
   const tooling = (data.prior_work?.verification_tooling ?? [])
     .map((item) => {
       const language = item.language ?? 'Not specified';
-      const inputFormat = item.input_format ?? 'Not specified';
+      const inputFormat = renderInputFormats(item.input_format);
       const outputFormat = item.output_format ?? 'Not specified';
       return `
         <tr>
