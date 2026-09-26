@@ -12,7 +12,8 @@ const priorWorkPath = path.resolve(__dirname, 'data/prior-work.yaml');
 const isGitHubPagesBuild = Boolean(process.env.GITHUB_PAGES);
 const configuredPagesBase = process.env.PAGES_BASE_PATH;
 const repositoryName = process.env.GITHUB_REPOSITORY?.split('/').at(-1) ?? '';
-const githubPagesBase = configuredPagesBase ?? (repositoryName ? `/${repositoryName}/` : '/');
+// actions/configure-pages reports base_path without a trailing slash (e.g. "/repo").
+const githubPagesBase = `${(configuredPagesBase || (repositoryName ? `/${repositoryName}` : '')).replace(/\/+$/, '')}/`;
 const virtualDataModuleId = 'virtual:mlwp-data';
 const resolvedVirtualDataModuleId = '\0virtual:mlwp-data';
 
