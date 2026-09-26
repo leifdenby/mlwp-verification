@@ -9,6 +9,12 @@ const __dirname = path.dirname(__filename);
 const modelsPath = path.resolve(__dirname, 'data/models.yaml');
 const metricsPath = path.resolve(__dirname, 'data/metrics.yaml');
 const priorWorkPath = path.resolve(__dirname, 'data/prior-work.yaml');
+const isGitHubPagesBuild = Boolean(process.env.GITHUB_PAGES);
+const configuredPagesBase = process.env.PAGES_BASE_PATH;
+const repositoryName = process.env.GITHUB_REPOSITORY?.split('/').at(-1) ?? '';
+const githubPagesBase = configuredPagesBase ?? (repositoryName ? `/${repositoryName}/` : '/');
+const virtualDataModuleId = 'virtual:mlwp-data';
+const resolvedVirtualDataModuleId = '\0virtual:mlwp-data';
 
 function toPosixPath(filePath) {
   return filePath.split(path.sep).join('/');
@@ -20,13 +26,14 @@ function enrichReport(report) {
   const localMirrorAbsPath = path.join(reportDir, 'source_page.html');
   const sourceUrlAbsPath = path.join(reportDir, 'source_url.txt');
 
-  let localMirrorPath = report.relative_path;
-  if (fs.existsSync(localMirrorAbsPath)) {
+  // reports/ is gitignored and not published, so Pages builds omit local mirror links.
+  let localMirrorPath = isGitHubPagesBuild ? null : report.relative_path;
+  if (!isGitHubPagesBuild && fs.existsSync(localMirrorAbsPath)) {
     localMirrorPath = toPosixPath(path.relative(__dirname, localMirrorAbsPath));
   }
 
-  let originalUrl = null;
-  if (fs.existsSync(sourceUrlAbsPath)) {
+  let originalUrl = report.original_url ?? null;
+  if (!originalUrl && fs.existsSync(sourceUrlAbsPath)) {
     const value = fs.readFileSync(sourceUrlAbsPath, 'utf8').trim();
     originalUrl = value.length > 0 ? value : null;
   }
@@ -74,6 +81,18 @@ function readData() {
 function mlwpDataApiPlugin() {
   return {
     name: 'mlwp-data-api',
+    resolveId(id) {
+      if (id === virtualDataModuleId) {
+        return resolvedVirtualDataModuleId;
+      }
+      return null;
+    },
+    load(id) {
+      if (id === resolvedVirtualDataModuleId) {
+        return `export default ${JSON.stringify(readData())};`;
+      }
+      return null;
+    },
     configureServer(server) {
       server.middlewares.use('/api/mlwp-data', (_req, res) => {
         try {
@@ -96,6 +115,10 @@ function mlwpDataApiPlugin() {
       server.watcher.on('change', (file) => {
         const resolved = path.resolve(file);
         if (resolved === modelsPath || resolved === metricsPath || resolved === priorWorkPath) {
+          const dataModule = server.moduleGraph.getModuleById(resolvedVirtualDataModuleId);
+          if (dataModule) {
+            server.moduleGraph.invalidateModule(dataModule);
+          }
           server.ws.send({ type: 'full-reload' });
         }
       });
@@ -104,5 +127,6 @@ function mlwpDataApiPlugin() {
 }
 
 export default defineConfig({
+  base: isGitHubPagesBuild ? githubPagesBase : '/',
   plugins: [mlwpDataApiPlugin()]
 });

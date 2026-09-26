@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MLWP Verification</title>
+    <script>
+      (function () {
+        var firstPathSegment = window.location.pathname.split('/').filter(Boolean)[0] || '';
+        var base = firstPathSegment ? '/' + firstPathSegment + '/' : '/';
+        var path = window.location.pathname.slice(base.length) + window.location.search + window.location.hash;
+        window.location.replace(base + '?path=' + encodeURIComponent(path));
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>

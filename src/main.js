@@ -1,3 +1,4 @@
+import mlwpData from 'virtual:mlwp-data';
 import './styles.css';
 
 const GRADE_VALUE = { A: 5, B: 4, C: 3, D: 2, E: 1 };
@@ -9,14 +10,32 @@ const GRADE_LABEL = {
   E: 'Poor'
 };
 
+const BASE_URL = import.meta.env.BASE_URL;
+const BASE_PATH = BASE_URL.replace(/\/$/, '');
+
 const app = document.querySelector('#app');
+
+function withBase(pathname = '/') {
+  const [pathAndSearch, hash = ''] = pathname.split('#');
+  const [path, search = ''] = pathAndSearch.split('?');
+  const normalizedPath = path === '/' ? '' : path.replace(/^\/+/, '');
+  return `${BASE_URL}${normalizedPath}${search ? `?${search}` : ''}${hash ? `#${hash}` : ''}`;
+}
+
+function stripBase(pathname) {
+  if (BASE_PATH && pathname.startsWith(BASE_PATH)) {
+    const stripped = pathname.slice(BASE_PATH.length);
+    return stripped.length > 0 ? stripped : '/';
+  }
+  return pathname;
+}
 
 function topNav() {
   return `
     <nav class="top-nav">
-      <a href="/" class="nav-link">Dashboard</a>
-      <a href="/prior-work" class="nav-link">Prior Work</a>
-      <a href="/todo" class="nav-link">TODO</a>
+      <a href="${withBase('/')}" class="nav-link">Dashboard</a>
+      <a href="${withBase('/prior-work')}" class="nav-link">Prior Work</a>
+      <a href="${withBase('/todo')}" class="nav-link">TODO</a>
     </nav>
   `;
 }
@@ -61,7 +80,7 @@ function metricHelpLink(metric) {
 
 function metricLabelHtml(metric, modelSlug) {
   if (metric.id === 'rmse' && modelSlug) {
-    return `<a href="/models/${modelSlug}/metrics/rmse">${metric.name}</a>`;
+    return `<a href="${withBase(`/models/${modelSlug}/metrics/rmse`)}">${metric.name}</a>`;
   }
   return metric.name;
 }
@@ -78,7 +97,7 @@ function notFoundPage() {
     <main class="app">
       <header class="top">
         ${topNav()}
-        <a href="/" class="back-link">Verification Hub</a>
+        <a href="${withBase('/')}" class="back-link">Verification Hub</a>
         <h1 class="title">Page not found</h1>
       </header>
       <section class="card">
@@ -131,7 +150,7 @@ function dashboardPage(data) {
       return `
         <article class="card">
           <div class="card-top">
-            <h2><a href="/models/${model.slug}">${model.name}</a></h2>
+            <h2><a href="${withBase(`/models/${model.slug}`)}">${model.name}</a></h2>
             <div class="overall-wrap">Overall ${gradeChip(overall)}</div>
           </div>
           <p class="meta">Provider: ${model.provider} | Class: ${model.model_class} | Resolution: ${model.resolution}</p>
@@ -146,7 +165,7 @@ function dashboardPage(data) {
     <main class="app">
       <header class="top">
         ${topNav()}
-        <a href="/" class="back-link">Verification Hub</a>
+        <a href="${withBase('/')}" class="back-link">Verification Hub</a>
         <span class="demo-badge">Demonstration</span>
         <h1 class="title">MLWP Benchmark Dashboard</h1>
         <p class="subtitle">Subject-area grades and metric-level skill scores for submitted machine learning weather prediction models, focused on km-scale forecasting systems.</p>
@@ -217,7 +236,7 @@ function priorWorkPage(data) {
     <main class="app">
       <header class="top">
         ${topNav()}
-        <a href="/" class="back-link">Verification Hub</a>
+        <a href="${withBase('/')}" class="back-link">Verification Hub</a>
         <h1 class="title">Prior Work</h1>
         <p class="subtitle">Curated references you can keep extending in <code>data/prior-work.yaml</code>.</p>
       </header>
@@ -258,7 +277,7 @@ function todoPage() {
     <main class="app">
       <header class="top">
         ${topNav()}
-        <a href="/" class="back-link">Verification Hub</a>
+        <a href="${withBase('/')}" class="back-link">Verification Hub</a>
         <h1 class="title">TODO</h1>
       </header>
       <section class="card">
@@ -366,7 +385,7 @@ function rmsePage(model) {
     <main class="app">
       <header class="top">
         ${topNav()}
-        <a href="/" class="back-link">Verification Hub</a>
+        <a href="${withBase('/')}" class="back-link">Verification Hub</a>
         <h1 class="title">RMSE by Physical Variable: ${model?.name ?? 'Model'}</h1>
         <p class="subtitle">Demonstration data: RMSE values computed against observations for this model and a single evaluation period.</p>
       </header>
@@ -415,11 +434,14 @@ function modelPage(data, slug) {
           const originalLink = report.original_url
             ? `<a href="${report.original_url}" target="_blank" rel="noreferrer">Original</a>`
             : `<span>Original unavailable</span>`;
+          const mirrorLink = report.local_mirror_path
+            ? `<a href="${withBase(`/${report.local_mirror_path}`)}">Local mirror</a>`
+            : '';
           return `
             <li>
               <span>${report.label}</span>
               <span class="source-links">
-                <a href="/${report.local_mirror_path}">Local mirror</a>
+                ${mirrorLink}
                 ${originalLink}
               </span>
             </li>
@@ -458,7 +480,7 @@ function modelPage(data, slug) {
     <main class="app">
       <header class="top">
         ${topNav()}
-        <a href="/" class="back-link">Verification Hub</a>
+        <a href="${withBase('/')}" class="back-link">Verification Hub</a>
         <h1 class="title">${model.name}</h1>
         <p class="subtitle">${model.provider} | ${model.model_class} | ${model.resolution} | Run cycle: ${model.run_cycle}</p>
       </header>
@@ -468,7 +490,7 @@ function modelPage(data, slug) {
 }
 
 function route(data) {
-  const path = window.location.pathname;
+  const path = stripBase(window.location.pathname);
   if (path === '/' || path === '/index.html') {
     return dashboardPage(data);
   }
@@ -503,27 +525,14 @@ function route(data) {
   return notFoundPage();
 }
 
-async function render() {
-  try {
-    const response = await fetch('/api/mlwp-data');
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-    const data = await response.json();
-    app.innerHTML = route(data);
-  } catch (error) {
-    app.innerHTML = `
-      <main class="app">
-        <header class="top">
-          <h1 class="title">MLWP Benchmark Dashboard</h1>
-        </header>
-        <div class="error">
-          Failed to load site data from <code>data/models.yaml</code>, <code>data/metrics.yaml</code>, or <code>data/prior-work.yaml</code>.<br />
-          ${error instanceof Error ? error.message : String(error)}
-        </div>
-      </main>
-    `;
+function render() {
+  const params = new URLSearchParams(window.location.search);
+  const redirectPath = params.get('path');
+  if (redirectPath) {
+    history.replaceState({}, '', withBase(decodeURIComponent(redirectPath)));
   }
+
+  app.innerHTML = route(mlwpData);
 }
 
 render();

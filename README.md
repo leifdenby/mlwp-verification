@@ -52,6 +52,12 @@ Hot reload behavior:
 - `npm run build`
 - `npm run preview`
 
+### GitHub Pages
+
+- The site deploys from `.github/workflows/deploy-pages.yml` on pushes to `main` and manual workflow runs.
+- The Vite build uses the repository base path on Pages, and `public/404.html` redirects deep links back into the app.
+- `reports/` is gitignored and not published, so Pages builds omit "Local mirror" links. "Original" links use the `original_url` field on each report in `data/models.yaml`.
+
 ### Existing report resources
 
 Downloaded verification references remain in `reports/` and are linked from the YAML subject areas.

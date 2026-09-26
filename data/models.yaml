@@ -5,8 +5,10 @@ subject_areas:
     reports:
       - label: CAWCR Forecast Verification Methods and FAQ
         relative_path: reports/cawcr_forecast_verification_methods_faq/source_page.html
+        original_url: https://cawcr.gov.au/projects/verification/
       - label: IVMW9 International Verification Method Workshop
         relative_path: reports/ivmw9_international_verification_method_workshop/source_page.html
+        original_url: https://ivmw2024.weathersa.co.za/
     metric_ids: [rmse, mae, anomaly_corr]
 
   - id: probabilistic_reliability
@@ -15,8 +17,10 @@ subject_areas:
     reports:
       - label: IVMW 2020 Major Outcomes (BAMS 2022)
         relative_path: reports/ivmw_2020_major_outcomes_bams_2022/source_url.txt
+        original_url: https://journals.ametsoc.org/view/journals/bams/103/3/BAMS-D-21-0126.1.xml
       - label: Verification of AI-Models in Operational Centers
         relative_path: reports/verification_ai_models_operational_centers/source_page.html
+        original_url: https://hpfx.collab.science.gc.ca/~bca851/VerAIops2025/index.html
     metric_ids: [crps, brier_score, reliability_diagram]
 
   - id: spatial_structure
@@ -25,8 +29,10 @@ subject_areas:
     reports:
       - label: Bridging the Gap Spatial Verification
         relative_path: reports/bridging_the_gap_spatial_verification/source_page.html
+        original_url: https://pic-romain.github.io/bridging-the-gap/
       - label: WGNE 2nd International Verification Challenge
         relative_path: reports/wgne_2nd_international_verification_challenge/source_page.html
+        original_url: https://wgne.net/2nd-international-verification-challenge-seeking-the-best-new-verification-metrics-making-use-of-non-traditional-observations/
     metric_ids: [fss, sal, object_metrics]
 
   - id: extreme_rare_events
@@ -35,8 +41,10 @@ subject_areas:
     reports:
       - label: WMO WGNEV Extreme Dependence for Binary Rare Events
         relative_path: reports/wmo_wgnev_extreme_dependence_binary_rare_events/source_page.html
+        original_url: https://wmo.int/wwrpwgne-joint-working-group-forecast-verification-research#Extreme_dependence
       - label: WWRP 2013 Precipitation Verification Methods
         relative_path: reports/wwrp_2013_precipitation_forecast_verification_methods/source_page.html
+        original_url: https://wmoomm.sharepoint.com/:b:/s/WWRP/Ea5efc60M_RHlp4uTpt3XfABRD8JiHfvdxMI9LFGf0rbyA?e=PpEcAr
     metric_ids: [extremal_dependence, ets, pod_far_balance]
 
   - id: cloud_precip_physics
@@ -45,8 +53,10 @@ subject_areas:
     reports:
       - label: WWRP 2012 Cloud Parameters Recommended Methods
         relative_path: reports/wwrp_2012_cloud_parameters_recommended_methods/source_page.html
+        original_url: https://en.pdfdrive.to/dl/wmo-recommended-methods-for-evaluating-cloud-and-related-parameters-0
       - label: VerAI Workshop 2025 (Meteorological Forecasts)
         relative_path: reports/verai_workshop_2025_meteorological_forecasts/source_page.html
+        original_url: https://www.met.reading.ac.uk/~pt904209/VerAI2025/index.html
     metric_ids: [cloud_fraction_error, precip_intensity_bias, diurnal_cycle_phase]
 
 models:
